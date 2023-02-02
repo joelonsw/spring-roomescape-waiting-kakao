@@ -19,9 +19,9 @@ public class WaitingController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> waitReservation(@LoginMember UserDetails userDetails,
-                                                @RequestBody WaitingRequest waitingRequest) {
-        WaitingRegisterStatus waitingRegisterStatus = waitingService.waitForReservation(userDetails, waitingRequest);
+    public ResponseEntity<Void> createWaitingWithPolicy(@LoginMember UserDetails userDetails,
+                                                        @RequestBody WaitingRequest waitingRequest) {
+        WaitingRegisterStatus waitingRegisterStatus = waitingService.createWaitingWithPolicy(userDetails, waitingRequest);
         if (waitingRegisterStatus.isRegisteredAsWaiting()) {
             return ResponseEntity.created(URI.create("/reservation-waitings/" + waitingRegisterStatus.getId())).build();
         }

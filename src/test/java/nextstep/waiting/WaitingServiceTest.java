@@ -116,7 +116,7 @@ class WaitingServiceTest {
         WaitingRequest waitingRequest = new WaitingRequest(schedule1.getId());
 
         // when
-        WaitingRegisterStatus waitingRegisterStatus = waitingService.waitForReservation(member1Details, waitingRequest);
+        WaitingRegisterStatus waitingRegisterStatus = waitingService.createWaitingWithPolicy(member1Details, waitingRequest);
 
         // then
         assertThat(waitingRegisterStatus.isRegisteredAsWaiting()).isFalse();
@@ -131,7 +131,7 @@ class WaitingServiceTest {
         WaitingRequest waitingRequest = new WaitingRequest(schedule1.getId());
 
         // when
-        WaitingRegisterStatus waitingRegisterStatus = waitingService.waitForReservation(member1Details, waitingRequest);
+        WaitingRegisterStatus waitingRegisterStatus = waitingService.createWaitingWithPolicy(member1Details, waitingRequest);
 
         // then
         assertThat(waitingRegisterStatus.isRegisteredAsWaiting()).isTrue();
@@ -146,7 +146,7 @@ class WaitingServiceTest {
         WaitingRequest waitingRequest = new WaitingRequest(schedule1.getId());
 
         // when
-        assertThatCode(() -> waitingService.waitForReservation(member1Details, waitingRequest))
+        assertThatCode(() -> waitingService.createWaitingWithPolicy(member1Details, waitingRequest))
                 .isInstanceOf(DuplicateEntityException.class);
     }
 
@@ -158,10 +158,10 @@ class WaitingServiceTest {
         reservationDao.save(reservation);
 
         WaitingRequest waitingRequest = new WaitingRequest(schedule1.getId());
-        waitingService.waitForReservation(member1Details, waitingRequest);
+        waitingService.createWaitingWithPolicy(member1Details, waitingRequest);
 
         // when
-        assertThatCode(() -> waitingService.waitForReservation(member1Details, waitingRequest))
+        assertThatCode(() -> waitingService.createWaitingWithPolicy(member1Details, waitingRequest))
                 .isInstanceOf(DuplicateEntityException.class);
     }
 }

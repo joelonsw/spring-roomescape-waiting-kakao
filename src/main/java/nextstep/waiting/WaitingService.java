@@ -31,7 +31,7 @@ public class WaitingService {
         this.waitingDao = waitingDao;
     }
 
-    public WaitingRegisterStatus waitForReservation(UserDetails userDetails, WaitingRequest waitingRequest) {
+    public WaitingRegisterStatus createWaitingWithPolicy(UserDetails userDetails, WaitingRequest waitingRequest) {
         Member member = findMember(userDetails);
 
         Schedule schedule = scheduleDao.findById(waitingRequest.getScheduleId());

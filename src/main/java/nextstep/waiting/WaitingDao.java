@@ -51,10 +51,10 @@ public class WaitingDao {
                 "schedule.id, schedule.theme_id, schedule.date, schedule.time, " +
                 "theme.id, theme.name, theme.desc, theme.price, " +
                 "member.id, member.username, member.password, member.name, member.phone, member.role " +
-                "from waiting " +
-                "inner join schedule on waiting.schedule_id = schedule.id " +
-                "inner join theme on schedule.theme_id = theme.id " +
-                "inner join member on waiting.member_id = member.id " +
+                "FROM waiting " +
+                "INNER JOIN schedule ON waiting.schedule_id = schedule.id " +
+                "INNER JOIN theme ON schedule.theme_id = theme.id " +
+                "INNER JOIN member ON waiting.member_id = member.id " +
                 "where waiting.id = ?;";
         try {
             return jdbcTemplate.queryForObject(sql, rowMapper, id);
@@ -89,10 +89,10 @@ public class WaitingDao {
                 "schedule.id, schedule.theme_id, schedule.date, schedule.time, " +
                 "theme.id, theme.name, theme.desc, theme.price, " +
                 "member.id, member.username, member.password, member.name, member.phone, member.role " +
-                "from waiting " +
-                "inner join schedule on waiting.schedule_id = schedule.id " +
-                "inner join theme on schedule.theme_id = theme.id " +
-                "inner join member on waiting.member_id = member.id " +
+                "FROM waiting " +
+                "INNER JOIN schedule ON waiting.schedule_id = schedule.id " +
+                "INNER JOIN theme ON schedule.theme_id = theme.id " +
+                "INNER JOIN member ON waiting.member_id = member.id " +
                 "where member.id = ?;";
 
         try {
@@ -106,7 +106,7 @@ public class WaitingDao {
         String sql = "SELECT " +
                 "count(*) " +
                 "FROM waiting " +
-                "where waiting.id < ? and waiting.schedule_id = ?";
+                "where waiting.id < ? AND waiting.schedule_id = ?";
 
         Long count = jdbcTemplate.queryForObject(sql, Long.class, waiting.getId(), waiting.getSchedule().getId());
         return count + 1;
@@ -118,10 +118,10 @@ public class WaitingDao {
                 "schedule.id, schedule.theme_id, schedule.date, schedule.time, " +
                 "theme.id, theme.name, theme.desc, theme.price, " +
                 "member.id, member.username, member.password, member.name, member.phone, member.role " +
-                "from waiting " +
-                "inner join schedule on waiting.schedule_id = schedule.id " +
-                "inner join theme on schedule.theme_id = theme.id " +
-                "inner join member on waiting.member_id = member.id " +
+                "FROM waiting " +
+                "INNER JOIN schedule ON waiting.schedule_id = schedule.id " +
+                "INNER JOIN theme ON schedule.theme_id = theme.id " +
+                "INNER JOIN member ON waiting.member_id = member.id " +
                 "where schedule.id = ?;";
 
         try {

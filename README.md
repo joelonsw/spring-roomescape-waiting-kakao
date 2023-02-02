@@ -73,6 +73,6 @@
   ```
   
 ### 리팩터링 중점 사안
-- [ ] SQL 쿼리 예약어는 대문자로
+- [x] SQL 쿼리 예약어는 대문자로
 - [ ] Reservation Service에서 예약 승격시, 하나의 waiting만을 가져오도록 수정
 - [ ] Waiting의 waitForReservation 메서드 네이밍 변경

@@ -84,9 +84,8 @@ public class ReservationService {
 
         reservationDao.deleteById(id);
 
-        List<Waiting> waitings = waitingDao.findByScheduleId(reservation.getSchedule().getId());
-        if (!waitings.isEmpty()) {
-            Waiting waiting = waitings.get(0);
+        Waiting waiting = waitingDao.findFirstWaitingByScheduleId(reservation.getSchedule().getId());
+        if (waiting != null) {
             Reservation nextReservation = new Reservation(waiting.getSchedule(), waiting.getMember());
             reservationDao.save(nextReservation);
             waitingDao.deleteById(waiting.getId());

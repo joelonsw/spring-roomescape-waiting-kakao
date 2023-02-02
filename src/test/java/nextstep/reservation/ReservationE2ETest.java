@@ -1,11 +1,13 @@
 package nextstep.reservation;
 
+import auth.TokenResponse;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import nextstep.AbstractE2ETest;
 import nextstep.schedule.ScheduleRequest;
 import nextstep.theme.ThemeRequest;
+import nextstep.waiting.WaitingRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,8 @@ import org.springframework.http.MediaType;
 
 import java.util.List;
 
+import static nextstep.member.MemberE2ETest.createNormalMemberAndIssueToken;
+import static nextstep.waiting.WaitingE2ETest.createWaiting;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReservationE2ETest extends AbstractE2ETest {
@@ -119,6 +123,28 @@ public class ReservationE2ETest extends AbstractE2ETest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
+    @DisplayName("예약을 삭제하고 예약 승격하기")
+    @Test
+    void deleteAndPromoteWaiting() {
+        TokenResponse normalMember = createNormalMemberAndIssueToken();
+        ReservationRequest reservationRequest = new ReservationRequest(scheduleId);
+        ExtractableResponse<Response> reservation = createReservation(normalMember.getAccessToken(), reservationRequest);
+
+        TokenResponse newNormalMember = createNormalMemberAndIssueToken();
+        WaitingRequest waitingRequest = new WaitingRequest(scheduleId);
+        createWaiting(newNormalMember.getAccessToken(), waitingRequest);
+
+
+        var response = RestAssured
+                .given().log().all()
+                .auth().oauth2(normalMember.getAccessToken())
+                .when().delete(reservation.header("Location"))
+                .then().log().all()
+                .extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+    }
+
     @DisplayName("중복 예약을 생성한다")
     @Test
     void createDuplicateReservation() {
@@ -164,7 +190,7 @@ public class ReservationE2ETest extends AbstractE2ETest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
-    @DisplayName("다른 사람이 예약을삭제한다")
+    @DisplayName("다른 사람이 예약을 삭제한다")
     @Test
     void deleteReservationOfOthers() {
         createReservation();
@@ -190,8 +216,8 @@ public class ReservationE2ETest extends AbstractE2ETest {
                 .extract();
     }
 
-    public static void createReservation(String token, ReservationRequest reservationRequest) {
-        RestAssured
+    public static ExtractableResponse<Response> createReservation(String token, ReservationRequest reservationRequest) {
+        return RestAssured
                 .given().log().all()
                 .auth().oauth2(token)
                 .body(reservationRequest)

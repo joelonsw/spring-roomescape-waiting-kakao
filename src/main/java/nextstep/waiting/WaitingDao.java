@@ -55,7 +55,7 @@ public class WaitingDao {
                 "INNER JOIN schedule ON waiting.schedule_id = schedule.id " +
                 "INNER JOIN theme ON schedule.theme_id = theme.id " +
                 "INNER JOIN member ON waiting.member_id = member.id " +
-                "where waiting.id = ?;";
+                "WHERE waiting.id = ?;";
         try {
             return jdbcTemplate.queryForObject(sql, rowMapper, id);
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class WaitingDao {
     }
 
     public void deleteById(Long id) {
-        String sql = "Delete FROM waiting where id = ?";
+        String sql = "Delete FROM waiting WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 
@@ -93,7 +93,7 @@ public class WaitingDao {
                 "INNER JOIN schedule ON waiting.schedule_id = schedule.id " +
                 "INNER JOIN theme ON schedule.theme_id = theme.id " +
                 "INNER JOIN member ON waiting.member_id = member.id " +
-                "where member.id = ?;";
+                "WHERE member.id = ?;";
 
         try {
             return jdbcTemplate.query(sql, rowMapper, memberId);
@@ -106,7 +106,7 @@ public class WaitingDao {
         String sql = "SELECT " +
                 "count(*) " +
                 "FROM waiting " +
-                "where waiting.id < ? AND waiting.schedule_id = ?";
+                "WHERE waiting.id < ? AND waiting.schedule_id = ?";
 
         Long count = jdbcTemplate.queryForObject(sql, Long.class, waiting.getId(), waiting.getSchedule().getId());
         return count + 1;
@@ -122,12 +122,31 @@ public class WaitingDao {
                 "INNER JOIN schedule ON waiting.schedule_id = schedule.id " +
                 "INNER JOIN theme ON schedule.theme_id = theme.id " +
                 "INNER JOIN member ON waiting.member_id = member.id " +
-                "where schedule.id = ?;";
+                "WHERE schedule.id = ?;";
 
         try {
             return jdbcTemplate.query(sql, rowMapper, scheduleId);
         } catch (Exception e) {
             return Collections.emptyList();
+        }
+    }
+
+    public Waiting findFirstWaitingByScheduleId(Long scheduleId) {
+        String sql = "SELECT " +
+                "waiting.id, waiting.schedule_id, waiting.member_id, " +
+                "schedule.id, schedule.theme_id, schedule.date, schedule.time, " +
+                "theme.id, theme.name, theme.desc, theme.price, " +
+                "member.id, member.username, member.password, member.name, member.phone, member.role " +
+                "FROM waiting " +
+                "INNER JOIN schedule ON waiting.schedule_id = schedule.id " +
+                "INNER JOIN theme ON schedule.theme_id = theme.id " +
+                "INNER JOIN member ON waiting.member_id = member.id " +
+                "WHERE schedule.id = ? ORDER BY waiting.id LIMIT 1;";
+
+        try {
+            return jdbcTemplate.queryForObject(sql, rowMapper, scheduleId);
+        } catch (Exception e) {
+            return null;
         }
     }
 }
